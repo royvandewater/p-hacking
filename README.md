@@ -4,6 +4,8 @@ Try to see if creating p value milestones will let me hit statsig with a smaller
 
 ## Conclusion
 
+It does look like there we can get our results in ~25% less samples. However, I think that may come at the cost of 25% more Type II Errors.
+
 #### When run WITH milestones
 
 ```
