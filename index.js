@@ -2,7 +2,7 @@ const R = require('ramda')
 const genstats = require('genstats')
 const {format: asTable} = require('obj-array-table')
 
-const totalPopulationSize = 2500
+const totalPopulationSize = 1500
 
 const pValue = (control, experiment) => {
   if (control.runs.length < 2 || experiment.runs.length < 2) return 1;
@@ -29,9 +29,9 @@ const main = () => {
    {name: 'experiment 5',  liftToBaseProbability: 0.05,  runs: [], milestones: R.clone(milestones)},
    {name: 'experiment 6',  liftToBaseProbability: 0.06,  runs: [], milestones: R.clone(milestones)},
    {name: 'experiment 7',  liftToBaseProbability: 0.07,  runs: [], milestones: R.clone(milestones)},
-   {name: 'experiment 8',  liftToBaseProbability: 0.010, runs: [], milestones: R.clone(milestones)},
-   {name: 'experiment 9',  liftToBaseProbability: 0.011, runs: [], milestones: R.clone(milestones)},
-   {name: 'experiment 10', liftToBaseProbability: 0.012, runs: [], milestones: R.clone(milestones)},
+   {name: 'experiment 8',  liftToBaseProbability: 0.10, runs: [], milestones: R.clone(milestones)},
+   {name: 'experiment 9',  liftToBaseProbability: 0.11, runs: [], milestones: R.clone(milestones)},
+   {name: 'experiment 10', liftToBaseProbability: 0.12, runs: [], milestones: R.clone(milestones)},
   ]
   const endedExperiments = []
 
@@ -65,7 +65,7 @@ const main = () => {
     experiments = R.without([experiment], experiments)
   }
 
-  const results = []
+  let results = []
 
   endedExperiments.forEach((experiment) => {
     const {name, liftToBaseProbability, runs} = experiment
@@ -75,13 +75,17 @@ const main = () => {
     results.push({
       name,
       knownLift: liftToBaseProbability,
-      conversionRate: successes.length / runs.length,
-      p,
+      liftToBaseProbability,
+      conversionRate: (successes.length / runs.length).toFixed(3),
+      p: (Math.ceil(p * 1000) / 1000).toFixed(3),
       statsig: p < 0.05,
     })
   })
 
-  console.log(asTable(R.sortBy(R.prop('knownLift'), results)))
+  results = R.sortBy(R.prop('liftToBaseProbability'), results)
+  results = R.map(R.omit(['liftToBaseProbability']), results)
+
+  console.log(asTable(results))
   console.log(`\nAchieved in ${i} runs`)
 }
 main();
